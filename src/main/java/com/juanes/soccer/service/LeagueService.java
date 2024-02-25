@@ -7,7 +7,9 @@ import com.juanes.soccer.repository.LeagueRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class LeagueService {
@@ -19,20 +21,19 @@ public class LeagueService {
         this.countryRepository = countryRepository;
     }
 
-    public Iterable<LeagueRead> get() {
-        ArrayList<LeagueRead> leagueReads = new ArrayList<>();
-        leagueRepository.findAll().forEach(league -> {
-            LeagueRead leagueRead = new LeagueRead();
-            leagueRead.setUuid(league.getUuid());
-            leagueRead.setName(league.getName());
-            try {
-                leagueRead.setCountry(countryRepository.findById(league.getCountryUuid()).orElseThrow(() -> new Exception("Country not found")));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            leagueReads.add(leagueRead);
-        });
-        return leagueReads;
+    public List<LeagueRead> get() {
+        return ((List<League>) leagueRepository.findAll()).stream()
+                .map(league -> {
+                    LeagueRead leagueRead = new LeagueRead();
+                    leagueRead.setUuid(league.getUuid());
+                    leagueRead.setName(league.getName());
+                    try {
+                        leagueRead.setCountry(countryRepository.findById(league.getCountryUuid()).orElseThrow(() -> new Exception("Country not found")));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    return leagueRead;
+                }).collect(Collectors.toList());
     }
 
     public League save(League league) {
