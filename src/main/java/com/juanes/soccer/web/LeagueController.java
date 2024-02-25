@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class LeagueController {
     private final LeagueService leagueService;
@@ -18,12 +20,12 @@ public class LeagueController {
     }
 
     @GetMapping("/league")
-    public Iterable<LeagueRead> get(){
+    public List<LeagueRead> get() {
         return leagueService.get();
     }
 
     @PostMapping("league")
-    public League create(@RequestBody League league){
+    public League create(@RequestBody League league) {
         return leagueService.save(league);
     }
 }
